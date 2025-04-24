@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atualizarcontato
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: atualizarcontato
+  template:
+    metadata:
+      labels:
+        app: atualizarcontato
+    spec:
+      containers:
+        - name: atualizarcontato
+          image: leonardodfg12/atualizarcontato:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=sqlserver;Database=ContactZone;User Id=sa;Password=@Sql2019;MultipleActiveResultSets=true;Encrypt=YES;TrustServerCertificate=YES"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq://rabbitmq"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: atualizarcontato
+spec:
+  selector:
+    app: atualizarcontato
+  ports:
+    - port: 8081
+      targetPort: 8080
+  type: LoadBalancer

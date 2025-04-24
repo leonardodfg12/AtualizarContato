@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deletarcontato
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deletarcontato
+  template:
+    metadata:
+      labels:
+        app: deletarcontato
+    spec:
+      containers:
+        - name: deletarcontato
+          image: leonardodfg12/deletarcontato:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=sqlserver;Database=ContactZone;User Id=sa;Password=@Sql2019;MultipleActiveResultSets=true;Encrypt=YES;TrustServerCertificate=YES"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq://rabbitmq"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deletarcontato
+spec:
+  selector:
+    app: deletarcontato
+  ports:
+    - port: 8082
+      targetPort: 8080
+  type: LoadBalancer
